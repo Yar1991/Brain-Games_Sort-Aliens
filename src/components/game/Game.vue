@@ -7,17 +7,6 @@ import InfoBar from "@/components/game/InfoBar.vue"
 import TrainingStartModal from "@/components/game/TrainingStartModal.vue"
 import TrainingEndModal from "@/components/game/TrainingEndModal.vue"
 
-// game objects:
-import greenAlien from "@/assets/game-assets/alien-green.svg"
-import yellowAlien from "@/assets/game-assets/alien-yellow.svg"
-import redAlien from "@/assets/game-assets/alien-red.svg"
-import greenPlanet from "@/assets/game-assets/planet_green.png"
-import yellowPlanet from "@/assets/game-assets/planet_yellow.png"
-import redPlanet from "@/assets/game-assets/planet_red.png"
-import bgDust from "@/assets/game-assets/bg-dust.png"
-import bgStars from "@/assets/game-assets/bg-stars.png"
-import mistakeIcon from "@/assets/game-assets/mistake.png"
-// -------------
 
 const gameStore = useGameStore();
 
@@ -33,15 +22,15 @@ const backgrounds = ref<P.GameObjects.TileSprite[]>();
 const debounceTimer = ref<number | null>(); // timeout for debouncing when key is pressed
 
 function preloadGame(this: P.Scene) {
-  this.load.image("green-alien", greenAlien)
-  this.load.image("yellow-alien", yellowAlien)
-  this.load.image("red-alien", redAlien)
-  this.load.image("green-planet", greenPlanet)
-  this.load.image("yellow-planet", yellowPlanet)
-  this.load.image("red-planet", redPlanet)
-  this.load.image("bg-dust", bgDust)
-  this.load.image("bg-stars", bgStars)
-  this.load.image("mistake", mistakeIcon)
+  this.load.image("green-alien", "/game-assets/alien-green.svg")
+  this.load.image("yellow-alien", "/game-assets/alien-yellow.svg")
+  this.load.image("red-alien", "/game-assets/alien-red.svg")
+  this.load.image("green-planet", "/game-assets/planet_green.png")
+  this.load.image("yellow-planet", "/game-assets/planet_yellow.png")
+  this.load.image("red-planet", "/game-assets/planet_red.png")
+  this.load.image("bg-dust", "/game-assets/bg-dust.png")
+  this.load.image("bg-stars", "/game-assets/bg-stars.png")
+  this.load.image("mistake", "/game-assets/mistake.png")
 }
 
 function createGame(this: P.Scene) {
@@ -79,7 +68,7 @@ function createGame(this: P.Scene) {
       randomIndex = Math.floor(Math.random() * 2);
       alien = aliens.value?.create(this.scale.width / 2, 100 * i - 20, ["green-alien", "yellow-alien"][randomIndex])
     }
-    alien.setScale(0.5).setScrollFactor(0).setActive(true);
+    alien.setScale(0.8).setScrollFactor(0).setActive(true);
   }
   this.physics.add.collider(aliens.value, planets.value, handleCollision);
 
@@ -89,30 +78,30 @@ function createGame(this: P.Scene) {
 function moveAliens(e: KeyboardEvent) {
   // moving aliens on the "keydown" event:
   const keyVal = e.key;
-  if ((keyVal === "ArrowDown" && gameStore.difficultyLevel === "normal") || ["training-end", "finish"].includes(gameStore.currentMode)) {
+  if ((["ArrowDown", "s"].includes(keyVal) && gameStore.difficultyLevel === "normal") || ["training-end", "finish"].includes(gameStore.currentMode)) {
     return;
   }
-  if (keyVal === "ArrowLeft") {
+  if (["ArrowLeft", "a"].includes(keyVal)) {
     clearTimeout(debounceTimer.value as number);
     debounceTimer.value = setTimeout(() => {
       const targetAlien = aliens.value?.getFirst(true) as P.Physics.Arcade.Sprite;
       gameScene.value!.events.on("update", () => {
         targetAlien.y += 14;
-        targetAlien.x -= 17;
+        targetAlien.x -= 18;
       })
       updateAliens();
     }, 200)
-  } else if (keyVal === "ArrowRight") {
+  } else if (["ArrowRight", "d"].includes(keyVal)) {
     clearTimeout(debounceTimer.value as number);
     debounceTimer.value = setTimeout(() => {
       const targetAlien = aliens.value?.getFirst(true) as P.Physics.Arcade.Sprite;
       gameScene.value!.events.on("update", () => {
         targetAlien.y += 14;
-        targetAlien.x += 17;
+        targetAlien.x += 18;
       })
       updateAliens();
     }, 200)
-  } else if (keyVal === "ArrowDown" && (gameStore.difficultyLevel === "hard" || gameStore.currentMode === "training-play")) {
+  } else if (["ArrowDown", "s"].includes(keyVal) && (gameStore.difficultyLevel === "hard" || gameStore.currentMode === "training-play")) {
     clearTimeout(debounceTimer.value as number);
     debounceTimer.value = setTimeout(() => {
       const targetAlien = aliens.value?.getFirst(true) as P.Physics.Arcade.Sprite;
@@ -174,7 +163,7 @@ function updateAliens() {
   }
 
 
-  alien.setScale(0.5).setScrollFactor(0).setActive(true);
+  alien.setScale(0.8).setScrollFactor(0).setActive(true);
   aliens.value?.getChildren().forEach((alien, index) => {
     const targetAlien = alien as P.Physics.Arcade.Sprite;
     if (index !== 0) {
